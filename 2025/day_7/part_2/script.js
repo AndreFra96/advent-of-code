@@ -1,3 +1,4 @@
+import { assert } from "console";
 import fs from "fs"
 
 const input = fs.readFileSync('./input.txt', 'utf-8')
@@ -33,20 +34,23 @@ for (let i = 0; i < grid.length; i++) {
                 const countUpper = cellsPathCount[i - 1][j]
 
                 if (grid[i]?.[j - 1]) {
-                    //timelines a sinistra dello splitter
+                    //timelines a sinistra dello splitter, ha già il valore della cella
+                    //sopra di esso perchè siamo già passati dalla cella a sinistra di questa
+                    //devo quindi prendere il valore della cella di sinistra e aggiungere 
+                    //quello che c'è sopra allo splitter
                     const countLeft = cellsPathCount[i][j - 1] ?? 0
                     cellsPathCount[i][j - 1] = countLeft + countUpper
                     grid[i][j - 1] = '|'
                 }
 
                 if (grid[i]?.[j + 1]) {
-                    //timelines a destra dello splitter
-                    const countRigth = cellsPathCount[i][j + 1] ?? 0
-                    //timelines in alto a destra dello splitter
-                    //a sinistra non ho questo conteggio perchè viene già incrementato al giro precedente
-                    //a destra invece non sono ancora passato quando trovo lo splitter
+                    //Il totale a destra dello splitter a questo punto è ancora zero perchè
+                    //non ci siamo ancora passati, utilizzo quindi l'elemento sopra all'elemento 
+                    //a destra dello splitter per calcolare le timeline del percorso aggiungendo quello
+                    //che c'è sopra allo splitter
+                    assert((cellsPathCount[i][j + 1] ?? 0) == 0, "Count right on splitter should always be zero")
                     const countUpperRigth = cellsPathCount[i - 1][j + 1]
-                    cellsPathCount[i][j + 1] = countRigth + countUpper + countUpperRigth
+                    cellsPathCount[i][j + 1] = countUpper + countUpperRigth
                     grid[i][j + 1] = '|'
                 }
         }
